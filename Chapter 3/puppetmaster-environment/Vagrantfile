@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # All Vagrant configuration is done here. The most common configuration
+  # options are documented and commented below. For a complete reference,
+  # please see the online documentation at vagrantup.com.
+
+  config.vm.box = "puppetlabs/ubuntu-14.04-64-puppet"
+
+  
+  config.vm.define "puppetmaster" do |puppetmaster|
+    puppetmaster.vm.provider "vmware_fusion" do |v|
+      v.vmx["memsize"] = "4096"
+      v.vmx["numvcpus"] = "1"
+    end
+  	puppetmaster.vm.hostname = "puppet.localdomain"
+  	puppetmaster.vm.provision "shell", inline: "apt-get update"
+  	puppetmaster.vm.provision "puppet" do |puppet|
+  	  puppet.manifests_path = "puppet/manifests"
+  	  puppet.module_path    = "puppet/modules"
+  	  puppet.manifest_file  = "site.pp"
+  	end
+  end
+end
